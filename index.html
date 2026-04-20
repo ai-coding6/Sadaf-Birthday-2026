@@ -199,7 +199,8 @@
 
         <!-- VIDEO STAGE -->
         <div id="video-stage" class="absolute inset-0 hidden bg-black">
-            <video id="hero-video" class="w-full h-full object-cover" playsinline>
+            <!-- Added muted attribute to the video tag -->
+            <video id="hero-video" class="w-full h-full object-cover" playsinline muted>
                 <source src="Birthday video.mp4" type="video/mp4">
             </video>
             <div id="caption-box" class="caption-style">
@@ -275,11 +276,14 @@
         const END_TIME = START_TIME + LOOP_DURATION; 
 
         function playIntro() {
-            // Trigger music immediately on button click to handle browser autoplay policies
+            // Ensure the intro video is muted so the main music is heard clearly
+            video.muted = true;
+
+            // Trigger music immediately on button click
             music.currentTime = START_TIME;
             music.play().catch(e => console.log("Sound check:", e));
 
-            // Setup the custom loop
+            // Setup the loop logic
             music.ontimeupdate = function() {
                 if (music.currentTime >= END_TIME) {
                     music.currentTime = START_TIME;
@@ -287,10 +291,11 @@
                 }
             };
 
-            // Switch to video view
+            // Transition UI to video stage
             startScreen.classList.add('hidden');
             videoStage.classList.remove('hidden');
             
+            // Play video (muted)
             video.play().catch(e => {
                 console.log("Video failover:", e);
                 showInvite();
