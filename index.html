@@ -9,7 +9,6 @@
     <meta name="description" content="Mission Briefing: Save the world with Sadaf at Royal Springhills! Sunday, 3 May 2026.">
     <meta property="og:title" content="Super Sadaf's 7th Birthday Bash!">
     <meta property="og:description" content="Mission Briefing: Sunday, 3 May 2026 @ 16:30 PM. Uniform: Superhero Costume!">
-    <!-- Note: Absolute URL is best for WhatsApp previews -->
     <meta property="og:image" content="https://ai-coding6.github.io/Sadaf-Birthday-2026/Banner.jpg"> 
     <meta property="og:type" content="website">
 
@@ -47,7 +46,7 @@
             box-shadow: 0 0 100px rgba(0,0,0,1);
         }
 
-        /* Animated Sunburst for Intro */
+        /* Animated Sunburst */
         .sunburst {
             position: absolute;
             top: 50%;
@@ -65,6 +64,7 @@
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
+        /* Standard Animations */
         @keyframes heroIn {
             from { transform: scale(0.9); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
@@ -106,15 +106,7 @@
         }
         .super-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #660708; }
 
-        .super-static-btn {
-            background: linear-gradient(180deg, var(--super-red) 0%, #a4161a 100%);
-            border: 2px solid white;
-            box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
-            display: inline-block;
-            cursor: default;
-        }
-
-        #invite-card {
+        #invite-card, #success-page {
             display: none;
             opacity: 0;
             height: 100%;
@@ -199,10 +191,11 @@
 
         <!-- VIDEO STAGE -->
         <div id="video-stage" class="absolute inset-0 hidden bg-black">
-            <!-- Added muted attribute to the video tag -->
-            <video id="hero-video" class="w-full h-full object-cover" playsinline muted>
+            <!-- Video Intro (Muted to prioritize Music.mp3) -->
+            <video id="hero-video" class="w-full h-full object-cover relative z-10" playsinline muted>
                 <source src="Birthday video.mp4" type="video/mp4">
             </video>
+
             <div id="caption-box" class="caption-style">
                 <p id="caption-text" class="comic-font text-white text-2xl uppercase tracking-wide leading-tight"></p>
             </div>
@@ -216,7 +209,7 @@
             </div>
 
             <div class="banner-frame">
-                <img src="Banner.jpg" alt="Sadaf Birthday Banner" onerror="this.style.display='none'">
+                <img src="Banner.jpg" alt="Sadaf Birthday Banner" onerror="this.src='Banner.jpg'">
                 <div class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black to-transparent"></div>
             </div>
 
@@ -245,10 +238,10 @@
                 </div>
 
                 <div class="mt-12 mb-10">
-                    <p class="text-[10px] uppercase tracking-[0.4em] mb-5 opacity-60">Reporting to Mission Control</p>
-                    <div class="super-static-btn comic-font text-white text-3xl py-5 px-14 rounded-2xl">
+                    <p class="text-[10px] uppercase tracking-[0.4em] mb-5 opacity-60">Finalize Recruitment</p>
+                    <button onclick="confirmRSVP()" class="super-btn comic-font text-white text-3xl py-5 px-14 rounded-2xl w-full">
                         RSVP NOW
-                    </div>
+                    </button>
                     <p class="text-xl mt-5 text-yellow-400 font-bold tabular-nums tracking-widest">+62 812-8357-3424</p>
                 </div>
                 
@@ -259,6 +252,29 @@
             </div>
         </div>
 
+        <!-- MISSION ACCOMPLISHED PAGE -->
+        <div id="success-page" class="flex flex-col items-center justify-center p-8 text-center relative">
+            <div class="sunburst"></div>
+            <div class="animate-float mb-8">
+                <div class="w-32 h-32 bg-yellow-400 rounded-full flex items-center justify-center border-4 border-white shadow-[0_0_80px_var(--super-gold)]">
+                    <span class="text-blue-900 comic-font text-6xl">✓</span>
+                </div>
+            </div>
+            
+            <h1 class="comic-font text-5xl text-red-500 mb-4 animate-hero" style="text-shadow: 2px 2px 0 black;">MISSION ACCOMPLISHED!</h1>
+            
+            <div class="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 mb-8 w-full max-w-xs">
+                <h2 class="comic-font text-3xl text-white mb-2 text-glow">YOU ARE INVITED</h2>
+                <p class="text-yellow-400 font-bold uppercase tracking-widest text-xs">Recruitment Complete</p>
+            </div>
+
+            <p class="text-white/60 text-sm mb-12 italic">We can't wait to see your superpowers on May 3rd!</p>
+            
+            <button onclick="location.reload()" class="bg-white/10 text-white text-xs py-3 px-8 rounded-full border border-white/30 uppercase tracking-[0.3em] hover:bg-white/20 transition-all">
+                Reset Transmission
+            </button>
+        </div>
+
     </div>
 
     <script>
@@ -266,6 +282,7 @@
         const startScreen = document.getElementById('start-screen');
         const videoStage = document.getElementById('video-stage');
         const inviteCard = document.getElementById('invite-card');
+        const successPage = document.getElementById('success-page');
         const captionBox = document.getElementById('caption-box');
         const captionText = document.getElementById('caption-text');
         const music = document.getElementById('bg-music');
@@ -276,14 +293,11 @@
         const END_TIME = START_TIME + LOOP_DURATION; 
 
         function playIntro() {
-            // Ensure the intro video is muted so the main music is heard clearly
-            video.muted = true;
-
-            // Trigger music immediately on button click
+            // Trigger music immediately
             music.currentTime = START_TIME;
-            music.play().catch(e => console.log("Sound check:", e));
+            music.play().catch(e => console.log("Sound error:", e));
 
-            // Setup the loop logic
+            // Custom loop
             music.ontimeupdate = function() {
                 if (music.currentTime >= END_TIME) {
                     music.currentTime = START_TIME;
@@ -291,11 +305,11 @@
                 }
             };
 
-            // Transition UI to video stage
+            // Transition directly to video stage
             startScreen.classList.add('hidden');
             videoStage.classList.remove('hidden');
             
-            // Play video (muted)
+            // Play video intro
             video.play().catch(e => {
                 console.log("Video failover:", e);
                 showInvite();
@@ -323,7 +337,20 @@
             setTimeout(() => {
                 inviteCard.style.opacity = '1';
                 inviteCard.classList.add('animate-hero');
+                window.scrollTo(0,0);
             }, 50);
+        }
+
+        function confirmRSVP() {
+            inviteCard.style.opacity = '0';
+            setTimeout(() => {
+                inviteCard.style.display = 'none';
+                successPage.style.display = 'flex';
+                setTimeout(() => {
+                    successPage.style.opacity = '1';
+                    successPage.classList.add('animate-hero');
+                }, 50);
+            }, 500);
         }
 
         function toggleMusic() {
